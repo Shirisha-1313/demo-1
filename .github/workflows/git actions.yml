@@ -15,26 +15,33 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    job_1:
+    passing-values-bw-steps:
+    
         name: Upload Artifact
         runs-on: ubuntu-latest
         steps:
-            - name: "create a local file"
-              run: echo "Hi everyone." > file.txt
-            - uses: actions/upload-artifact@v2
-              with:
-                name: file
-                path: file.txt
-                retention-days: 10
-    job_2:
-        name: Download Artfact
-        runs-on: ubuntu-latest
-        needs: job_1
-        steps:
-            - uses: actions/download-artifact@v2
-              with:
-                name: file
-            - run: cat file.txt
+            - name: set value using env vars
+              run: |
+                echo "variablename=this is value" >> $GITHUB_ENV
+
+            - name : create-variables
+              id: var_source_step
+              run: |
+                echo "performing random task"
+                echo "::set-output name=var1_name::techschool"
+                echo "::set-output name=var2_date::$(date +'%Y-%m-%d-%H-%M')"
+            - name: get-variable-value
+              run: |
+                echo "printing values"
+                echo variablename: ${{ env.variablename}}
+                echo var1_name: ${{ steps.var_source_step.outputs.var1_name }}
+                echo var2_date: ${{ steps.var_source_step.outputs.var2-date }}
+
+              
+
+
+        
+
 
         
  
